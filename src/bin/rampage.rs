@@ -1,13 +1,13 @@
 extern crate rampage;
 
-use rampage::color::RgbColor;
+use rampage::color::Color;
 use rampage::output::{output_image, Image};
 
 fn main() {
     let width = 500;
     let height = 500;
     let pixels: Vec<_> = (0..(width * height))
-        .map(|_| RgbColor {
+        .map(|_| Color {
             red: 255,
             blue: 255,
             green: 0,

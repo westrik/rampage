@@ -1,11 +1,11 @@
-use crate::color::RgbColor;
+use crate::color::Color;
 use image::png::PNGEncoder;
 use image::ColorType;
 use std::fs::File;
 use std::path::Path;
 
 pub struct Image {
-    pub pixels: Vec<RgbColor>,
+    pub pixels: Vec<Color>,
     pub height: u32,
     pub width: u32,
 }

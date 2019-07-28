@@ -8,6 +8,10 @@ pub struct Vector {
     pub z: Float,
 }
 
+pub const fn make_vector(x: Float, y: Float, z: Float) -> Vector {
+    Vector { x, y, z }
+}
+
 impl Add for Vector {
     type Output = Self;
 
@@ -100,39 +104,85 @@ impl DivAssign for Vector {
     }
 }
 
+trait Length {
+    fn squared_len(&self) -> Float;
+    fn len(&self) -> Float;
+    fn to_unit(&self) -> Self;
+}
+
+impl Length for Vector {
+    fn squared_len(&self) -> Float {
+        self.x * self.x + self.y * self.y + self.z * self.z
+    }
+
+    fn len(&self) -> Float {
+        self.squared_len().sqrt()
+    }
+
+    fn to_unit(&self) -> Self {
+        self.scale(1. / self.len())
+    }
+}
+
+trait Scale {
+    fn scale(&self, rhs: Float) -> Self;
+    fn scale_mut(&mut self, rhs: Float);
+}
+
+impl Scale for Vector {
+    fn scale(&self, rhs: Float) -> Self {
+        Self {
+            x: self.x * rhs,
+            y: self.y * rhs,
+            z: self.z * rhs,
+        }
+    }
+
+    fn scale_mut(&mut self, rhs: Float) {
+        self.x *= rhs;
+        self.y *= rhs;
+        self.z *= rhs;
+    }
+}
+
+trait Dot {
+    fn dot(&self, rhs: Self) -> Float;
+}
+
+impl Dot for Vector {
+    fn dot(&self, rhs: Self) -> Float {
+        self.x * rhs.x + self.y * rhs.y + self.z * rhs.z
+    }
+}
+
+trait Cross {
+    fn cross(&self, rhs: Self) -> Self;
+}
+
+impl Cross for Vector {
+    fn cross(&self, rhs: Self) -> Self {
+        Vector {
+            x: self.y * rhs.z - self.z * rhs.y,
+            y: -(self.x * rhs.z - self.z * rhs.x),
+            z: self.x * rhs.y - self.y * rhs.x,
+        }
+    }
+}
+
 #[cfg(test)]
 mod test_vectors {
     use super::*;
+    use crate::float_constants;
 
-    const POS_123: Vector = Vector {
-        x: 1.,
-        y: 2.,
-        z: 3.,
-    };
+    const NULL: Vector = make_vector(0., 0., 0.);
+    const POS_100: Vector = make_vector(1., 0., 0.);
+    const POS_010: Vector = make_vector(0., 1., 0.);
+    const POS_001: Vector = make_vector(0., 0., 1.);
 
-    const NEG_123: Vector = Vector {
-        x: -1.,
-        y: -2.,
-        z: -3.,
-    };
-
-    const NULL: Vector = Vector {
-        x: 0.,
-        y: 0.,
-        z: 0.,
-    };
-
-    const NEG_111: Vector = Vector {
-        x: -1.,
-        y: -1.,
-        z: -1.,
-    };
-
-    const NEG_149: Vector = Vector {
-        x: -1.,
-        y: -4.,
-        z: -9.,
-    };
+    const POS_123: Vector = make_vector(1., 2., 3.);
+    const NEG_123: Vector = make_vector(-1., -2., -3.);
+    const NEG_111: Vector = make_vector(-1., -1., -1.);
+    const NEG_149: Vector = make_vector(-1., -4., -9.);
 
     #[test]
     fn test_add() {
@@ -191,11 +241,62 @@ mod test_vectors {
     fn test_div_zero() {
         assert_eq!(
             POS_123 / NULL,
-            Vector {
-                x: core::f64::INFINITY,
-                y: core::f64::INFINITY,
-                z: core::f64::INFINITY
-            }
+            make_vector(
+                float_constants::INFINITY,
+                float_constants::INFINITY,
+                float_constants::INFINITY
+            )
         );
+    }
+
+    #[test]
+    fn test_len() {
+        assert_eq!(NULL.len(), 0.);
+        assert_eq!(POS_100.len(), 1.);
+        assert_eq!(POS_123.len(), NEG_123.len());
+    }
+
+    #[test]
+    fn test_scale() {
+        assert_eq!(POS_100.scale(10.), make_vector(10., 0., 0.));
+        assert_eq!(POS_010.scale(10.), make_vector(0., 10., 0.));
+        assert_eq!(POS_001.scale(10.), make_vector(0., 0., 10.));
+    }
+
+    #[test]
+    fn test_scale_mut() {
+        let mut vector = POS_100.clone();
+        vector.scale_mut(10.);
+        assert_eq!(vector, make_vector(10., 0., 0.));
+
+        vector = POS_010.clone();
+        vector.scale_mut(10.);
+        assert_eq!(vector, make_vector(0., 10., 0.));
+
+        vector = POS_001.clone();
+        vector.scale_mut(10.);
+        assert_eq!(vector, make_vector(0., 0., 10.));
+    }
+
+    #[test]
+    fn test_to_unit() {
+        assert_eq!(POS_100.scale(10.).to_unit(), POS_100);
+        assert_eq!(POS_010.scale(10.).to_unit(), POS_010);
+        assert_eq!(POS_001.scale(10.).to_unit(), POS_001);
+    }
+
+    #[test]
+    fn test_dot() {
+        assert_eq!(POS_123.dot(NEG_123), -14.);
+        assert_eq!(POS_100.dot(POS_100), 1.);
+        assert_eq!(POS_010.dot(POS_010), 1.);
+        assert_eq!(POS_001.dot(POS_001), 1.);
+    }
+
+    #[test]
+    fn test_cross() {
+        assert_eq!(POS_100.cross(POS_001), make_vector(0., -1., 0.));
+        assert_eq!(POS_010.cross(POS_010), NULL);
+        assert_eq!(POS_123.cross(NEG_123), NULL);
     }
 }

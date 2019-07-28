@@ -3,3 +3,5 @@ pub struct RgbColor {
     pub green: u8,
     pub blue: u8,
 }
+
+pub type Color = RgbColor;
