@@ -8,3 +8,4 @@ edition = "2018"
 
 [dependencies]
 image = "0.22.0"
+wavefront_obj = "6.0.0"
