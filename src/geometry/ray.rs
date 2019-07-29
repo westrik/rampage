@@ -1,10 +1,10 @@
-use crate::geometry::vector::{Scale, Vector};
+use crate::geometry::vector::*;
 use crate::Float;
 
 #[derive(Debug, PartialEq)]
 pub struct Ray {
-    origin: Vector,
-    direction: Vector,
+    pub origin: Vector,
+    pub direction: Vector,
 }
 
 trait Point {
@@ -13,7 +13,7 @@ trait Point {
 
 impl Point for Ray {
     fn point(&self, distance: Float) -> Vector {
-        self.origin.clone() + self.direction.scale(distance)
+        self.origin + self.direction.scale(distance)
     }
 }
 

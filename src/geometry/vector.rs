@@ -1,7 +1,7 @@
 use crate::Float;
 use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign};
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Vector {
     pub x: Float,
     pub y: Float,
@@ -169,7 +169,7 @@ impl Cross for Vector {
 #[cfg(test)]
 pub(crate) mod test_vectors {
     use super::*;
-    use crate::float_constants;
+    use crate::float;
 
     pub const fn make_vector(x: Float, y: Float, z: Float) -> Vector {
         Vector { x, y, z }
@@ -242,11 +242,7 @@ pub(crate) mod test_vectors {
     fn test_div_zero() {
         assert_eq!(
             POS_123 / NULL,
-            make_vector(
-                float_constants::INFINITY,
-                float_constants::INFINITY,
-                float_constants::INFINITY
-            )
+            make_vector(float::INFINITY, float::INFINITY, float::INFINITY)
         );
     }
 

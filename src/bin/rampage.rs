@@ -1,7 +1,7 @@
 extern crate rampage;
 
 use rampage::color::Color;
-use rampage::output::{output_image, Image};
+use rampage::output::*;
 
 fn main() {
     let width = 500;
