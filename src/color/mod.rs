@@ -1,7 +1,7 @@
 use crate::Float;
 use std::ops::{AddAssign, Mul};
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct RgbColor {
     pub r: Float,
     pub g: Float,

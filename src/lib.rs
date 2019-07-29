@@ -51,8 +51,8 @@ fn get_color(ray: &Ray, world: &[Shape], depth: i32) -> Color {
 pub fn render_ball_scene() -> Image {
     let num_iterations = 100;
     let max_depth = 60;
-    let width = 200; // TODO: 2000
-    let height = 150; // TODO: 1500
+    let width: u32 = 200; // TODO: 2000
+    let height: u32 = 150; // TODO: 1500
 
     let from = Vector {
         x: 13.,
@@ -81,6 +81,9 @@ pub fn render_ball_scene() -> Image {
         distance_to_focus,
     );
 
+
+    let mut pixels = vec![Color{r:0.,g:0.,b:0.}; (width * height) as usize];
+
     let world = random_scene();
     let num_iterations_f = Float::from(num_iterations);
     let mut rng = rand::thread_rng();
@@ -108,9 +111,13 @@ pub fn render_ball_scene() -> Image {
                 g: pixel.g.sqrt(),
                 b: pixel.b.sqrt(),
             };
-            // TODO: output to pixel grid at i,j
+            pixels[(j*width+i) as usize] = pixel;
         }
     }
 
-    unimplemented!()
+    Image {
+        pixels,
+        height,
+        width,
+    }
 }

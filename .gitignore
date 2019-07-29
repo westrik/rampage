@@ -4,3 +4,5 @@
 **/*.rs.bk
 # CLion config
 .idea
+# Output
+output.png
