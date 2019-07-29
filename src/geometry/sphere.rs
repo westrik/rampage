@@ -11,7 +11,7 @@ pub struct Sphere {
 }
 
 impl Intersectable for Sphere {
-    fn intersect(&self, ray: &Ray, t_min: f64, t_max: f64, intersection: &Intersection) -> bool {
+    fn intersect(&self, ray: &Ray, t_min: f64, t_max: f64) -> Option<Intersection> {
         unimplemented!()
     }
 }

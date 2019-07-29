@@ -15,9 +15,9 @@ pub fn output_image(image: &Image, path: &str) {
 
     let mut raw_pixels = Vec::with_capacity(image.pixels.len() * 3);
     for pixel in &image.pixels {
-        raw_pixels.push(pixel.r);
-        raw_pixels.push(pixel.g);
-        raw_pixels.push(pixel.b);
+        raw_pixels.push((pixel.r * 256.) as u8);
+        raw_pixels.push((pixel.g * 256.) as u8);
+        raw_pixels.push((pixel.b * 256.) as u8);
     }
 
     PNGEncoder::new(output_file)

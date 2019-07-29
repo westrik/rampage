@@ -31,11 +31,11 @@ fn get_random_vector_in_unit_disk() -> Vector {
     vector
 }
 
-pub trait RayGeneration {
+pub trait RayGenerator {
     fn get_ray(&self, s: Float, t: Float) -> Ray;
 }
 
-impl RayGeneration for Camera {
+impl RayGenerator for Camera {
     fn get_ray(&self, s: Float, t: Float) -> Ray {
         let rd = get_random_vector_in_unit_disk().scale(self.lens_radius);
         let offset = self.u.scale(rd.x) + self.v.scale(rd.y);
@@ -51,7 +51,7 @@ impl RayGeneration for Camera {
 
 // TODO: add documentation.
 pub fn build_camera(
-    from: Vector,
+    origin: Vector,
     to: Vector,
     vup: Vector,
     vertical_fov: Float,
@@ -64,23 +64,18 @@ pub fn build_camera(
     let half_height = (theta / 2.).tan();
     let half_width = aspect * half_height;
 
-    let origin = from;
-    let w = (from - to).to_unit();
+    let w = (origin - to).to_unit();
     let u = vup.cross(w).to_unit();
     let v = w.cross(u);
 
-    let lower_left = origin
-        - u.scale(half_width * focus_distance)
-        - v.scale(half_height * focus_distance)
-        - w.scale(focus_distance);
-    let horizontal = u.scale(2. * half_width * focus_distance);
-    let vertical = v.scale(2. * half_height * focus_distance);
-
     Camera {
         origin,
-        lower_left,
-        horizontal,
-        vertical,
+        lower_left: origin
+            - u.scale(half_width * focus_distance)
+            - v.scale(half_height * focus_distance)
+            - w.scale(focus_distance),
+        horizontal: u.scale(2. * half_width * focus_distance),
+        vertical: v.scale(2. * half_height * focus_distance),
         u,
         v,
         w,

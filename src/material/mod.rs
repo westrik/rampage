@@ -17,14 +17,22 @@ pub enum Material {
     Metal(Metal),
 }
 
+pub struct Bounce {
+    pub attenuation: Color,
+    pub scattered: Ray,
+}
+
 pub trait Scatter {
-    fn scatter(
-        &self,
-        ray: &Ray,
-        intersection: &Intersection,
-        attenuation: Color,
-        scattered: &Ray,
-    ) -> bool;
+    fn scatter(&self, ray: &Ray, intersection: &Intersection) -> Option<Bounce>;
+}
+impl Scatter for Material {
+    fn scatter(&self, ray: &Ray, intersection: &Intersection) -> Option<Bounce> {
+        match self {
+            Material::Dielectric(material) => material.scatter(ray, intersection),
+            Material::Lambertian(material) => material.scatter(ray, intersection),
+            Material::Metal(material) => material.scatter(ray, intersection),
+        }
+    }
 }
 
 pub trait Reflect {

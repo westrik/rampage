@@ -5,12 +5,9 @@ use crate::geometry::vector::Vector;
 use crate::material::lambertian::Lambertian;
 use crate::material::Material;
 
-pub struct Scene {
-    shapes: Vec<Shape>,
-}
-
-pub fn random_scene() -> Scene {
-    let shape = Shape::Sphere(Sphere {
+pub fn random_scene() -> Vec<Shape> {
+    let mut shapes = Vec::new();
+    let globe = Shape::Sphere(Sphere {
         center: Vector {
             x: 0.,
             y: -1000.,
@@ -19,12 +16,14 @@ pub fn random_scene() -> Scene {
         radius: 1000.,
         material: Material::Lambertian(Lambertian {
             albedo: Color {
-                r: 127,
-                g: 127,
-                b: 127,
+                r: 0.5,
+                g: 0.5,
+                b: 0.5,
             },
         }),
     });
+
+    shapes.push(globe);
 
     // Make large globe (lambertian)
     // Add random small spheres in loop (random texture)
@@ -80,7 +79,5 @@ pub fn random_scene() -> Scene {
     }
     */
 
-    Scene {
-        shapes: Vec::with_capacity(100),
-    }
+    shapes
 }

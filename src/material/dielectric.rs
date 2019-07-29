@@ -1,7 +1,7 @@
 use crate::color::Color;
 use crate::geometry::ray::Ray;
 use crate::geometry::shape::Intersection;
-use crate::material::Scatter;
+use crate::material::{Bounce, Scatter};
 use crate::Float;
 
 pub struct Dielectric {
@@ -9,13 +9,7 @@ pub struct Dielectric {
 }
 
 impl Scatter for Dielectric {
-    fn scatter(
-        &self,
-        ray: &Ray,
-        intersection: &Intersection,
-        attenuation: Color,
-        scattered: &Ray,
-    ) -> bool {
+    fn scatter(&self, ray: &Ray, intersection: &Intersection) -> Option<Bounce> {
         unimplemented!()
     }
 }

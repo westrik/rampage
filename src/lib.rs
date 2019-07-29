@@ -4,20 +4,48 @@ pub mod geometry;
 pub mod material;
 pub mod output;
 
-use crate::camera::build_camera;
-use crate::geometry::vector::Vector;
-
+use crate::camera::*;
 use crate::color::Color;
+use crate::geometry::vector::*;
+use crate::material::*;
+
 use crate::geometry::ray::Ray;
 use crate::geometry::scene::random_scene;
-use crate::geometry::shape::Shape;
+use crate::geometry::shape::*;
 use crate::output::Image;
 pub use core::f64 as float;
+use rand::prelude::*;
 
 pub type Float = f64;
 
-fn get_color(ray: &Ray, world: Vec<Shape>, depth: i32) -> Color {
-    unimplemented!()
+fn get_color(ray: &Ray, world: &[Shape], depth: i32) -> Color {
+    let intersection = world.intersect(ray, 0.001, float::MAX);
+    match intersection {
+        Some(i) => {
+            let bounce = i.material.scatter(ray, &i);
+            match bounce {
+                Some(b) => b.attenuation * get_color(&b.scattered, world, depth + 1),
+                None => Color {
+                    r: 0.,
+                    g: 0.,
+                    b: 0.,
+                },
+            }
+        }
+        None => {
+            let unit_direction = ray.direction.to_unit();
+            let t = 0.5 * unit_direction.y + 1.;
+            Color {
+                r: 1. - t,
+                g: 1. - t,
+                b: 1. - t,
+            } * Color {
+                r: t * 0.5,
+                g: t * 0.7,
+                b: t,
+            }
+        }
+    }
 }
 
 pub fn render_ball_scene() -> Image {
@@ -54,17 +82,35 @@ pub fn render_ball_scene() -> Image {
     );
 
     let world = random_scene();
+    let num_iterations_f = Float::from(num_iterations);
+    let mut rng = rand::thread_rng();
 
-    // TODO: add render loop
-
-    /*
-        for j in height, i in width:
-            for iter in num_iterations:
-                output_color += (shoot ray with jitter + calculate contribution)
-            output_color /= num_iterations
-            output_color = output_color.sqrt()
-            add output color to pixel list
-    */
+    for j in 0..height {
+        for i in 0..width {
+            let mut pixel = Color {
+                r: 0.,
+                g: 0.,
+                b: 0.,
+            };
+            for iteration in 0..num_iterations {
+                let u = (Float::from(i) + rng.gen::<Float>()) / Float::from(width);
+                let v = (Float::from(j) + rng.gen::<Float>()) / Float::from(height);
+                let ray = camera.get_ray(u, v);
+                pixel += get_color(&ray, &world, 0);
+            }
+            pixel = Color {
+                r: pixel.r / num_iterations_f,
+                g: pixel.g / num_iterations_f,
+                b: pixel.b / num_iterations_f,
+            };
+            pixel = Color {
+                r: pixel.r.sqrt(),
+                g: pixel.g.sqrt(),
+                b: pixel.b.sqrt(),
+            };
+            // TODO: output to pixel grid at i,j
+        }
+    }
 
     unimplemented!()
 }

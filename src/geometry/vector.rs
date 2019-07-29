@@ -192,7 +192,7 @@ pub(crate) mod test_vectors {
 
     #[test]
     fn test_add_assign() {
-        let mut vector = POS_123.clone();
+        let mut vector = POS_123;
         vector += NEG_123;
         assert_eq!(vector, NULL);
     }
@@ -204,7 +204,7 @@ pub(crate) mod test_vectors {
 
     #[test]
     fn test_sub_assign() {
-        let mut vector = POS_123.clone();
+        let mut vector = POS_123;
         vector -= POS_123;
         assert_eq!(vector, NULL);
     }
@@ -221,7 +221,7 @@ pub(crate) mod test_vectors {
 
     #[test]
     fn test_mul_assign() {
-        let mut vector = POS_123.clone();
+        let mut vector = POS_123;
         vector *= NEG_123;
         assert_eq!(vector, NEG_149);
     }
@@ -233,7 +233,7 @@ pub(crate) mod test_vectors {
 
     #[test]
     fn test_div_assign() {
-        let mut vector = POS_123.clone();
+        let mut vector = POS_123;
         vector /= NEG_123;
         assert_eq!(vector, NEG_111);
     }
@@ -262,15 +262,15 @@ pub(crate) mod test_vectors {
 
     #[test]
     fn test_scale_mut() {
-        let mut vector = POS_100.clone();
+        let mut vector = POS_100;
         vector.scale_mut(10.);
         assert_eq!(vector, make_vector(10., 0., 0.));
 
-        vector = POS_010.clone();
+        vector = POS_010;
         vector.scale_mut(10.);
         assert_eq!(vector, make_vector(0., 10., 0.));
 
-        vector = POS_001.clone();
+        vector = POS_001;
         vector.scale_mut(10.);
         assert_eq!(vector, make_vector(0., 0., 10.));
     }
