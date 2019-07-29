@@ -7,7 +7,7 @@ pub struct Ray {
     pub direction: Vector,
 }
 
-trait Point {
+pub trait Point {
     fn point(&self, distance: Float) -> Vector;
 }
 

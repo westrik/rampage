@@ -167,7 +167,7 @@ impl Cross for Vector {
 }
 
 #[cfg(test)]
-pub(crate) mod test_vectors {
+pub mod test_vectors {
     use super::*;
     use crate::float;
 

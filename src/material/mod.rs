@@ -5,7 +5,7 @@ pub mod metal;
 use crate::color::Color;
 use crate::geometry::ray::Ray;
 use crate::geometry::shape::Intersection;
-use crate::geometry::vector::Vector;
+use crate::geometry::vector::*;
 use crate::Float;
 use dielectric::Dielectric;
 use lambertian::Lambertian;
@@ -40,7 +40,7 @@ pub trait Reflect {
 }
 impl Reflect for Material {
     fn reflect(&self, v: Vector, n: Vector) -> Vector {
-        unimplemented!()
+        v - n.scale(2. * v.dot(n))
     }
 }
 
@@ -49,6 +49,11 @@ pub trait Refract {
 }
 impl Refract for Material {
     fn refract(&self, v: Vector, n: Vector, ni_over_nt: f64, refracted: Vector) -> Vector {
+        /*
+        let uv = v.to_unit();
+        let dt = uv.dot(n);
+        let discriminant = 1. - ni_over_nt * ni_over_nt * (1. - dt * dt);
+        */
         unimplemented!()
     }
 }

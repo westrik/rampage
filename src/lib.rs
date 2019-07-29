@@ -3,6 +3,7 @@ pub mod color;
 pub mod geometry;
 pub mod material;
 pub mod output;
+pub mod util;
 
 use crate::camera::*;
 use crate::color::Color;
@@ -54,6 +55,15 @@ pub fn render_ball_scene() -> Image {
     let width: u32 = 200; // TODO: 2000
     let height: u32 = 150; // TODO: 1500
 
+    /*
+    TODO:
+    - implement Dielectric & Metal materials
+    - add parallelism
+    - finish random scene generation
+    - [verify] fix bug where everything looks really dark?
+    - refactoring + add more tests
+    */
+
     let from = Vector {
         x: 13.,
         y: 2.,
@@ -64,7 +74,7 @@ pub fn render_ball_scene() -> Image {
         y: 0.,
         z: 0.,
     };
-    let distance_to_focus = 10.;
+    let focus_distance = 10.;
     let aperture = 0.1;
 
     let camera = build_camera(
@@ -78,11 +88,17 @@ pub fn render_ball_scene() -> Image {
         Float::from(width) / Float::from(height),
         20.,
         aperture,
-        distance_to_focus,
+        focus_distance,
     );
 
-
-    let mut pixels = vec![Color{r:0.,g:0.,b:0.}; (width * height) as usize];
+    let mut pixels = vec![
+        Color {
+            r: 0.,
+            g: 0.,
+            b: 0.
+        };
+        (width * height) as usize
+    ];
 
     let world = random_scene();
     let num_iterations_f = Float::from(num_iterations);
@@ -111,7 +127,7 @@ pub fn render_ball_scene() -> Image {
                 g: pixel.g.sqrt(),
                 b: pixel.b.sqrt(),
             };
-            pixels[(j*width+i) as usize] = pixel;
+            pixels[(j * width + i) as usize] = pixel;
         }
     }
 

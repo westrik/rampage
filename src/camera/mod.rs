@@ -1,7 +1,7 @@
 use crate::geometry::ray::Ray;
 use crate::geometry::vector::*;
+use crate::util::random::*;
 use crate::{float, Float};
-use rand::prelude::*;
 
 #[derive(Debug, PartialEq)]
 pub struct Camera {
@@ -13,22 +13,6 @@ pub struct Camera {
     pub v: Vector,
     pub w: Vector,
     pub lens_radius: Float,
-}
-
-fn get_random_vector_in_unit_disk() -> Vector {
-    let mut rng = rand::thread_rng();
-    let mut vector;
-    loop {
-        vector = Vector {
-            x: 2. * rng.gen::<Float>() - 1.,
-            y: 2. * rng.gen::<Float>() - 1.,
-            z: 0.,
-        };
-        if vector.dot(vector) < 1. {
-            break;
-        }
-    }
-    vector
 }
 
 pub trait RayGenerator {
