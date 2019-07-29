@@ -8,10 +8,6 @@ pub struct Vector {
     pub z: Float,
 }
 
-pub const fn make_vector(x: Float, y: Float, z: Float) -> Vector {
-    Vector { x, y, z }
-}
-
 impl Add for Vector {
     type Output = Self;
 
@@ -104,7 +100,8 @@ impl DivAssign for Vector {
     }
 }
 
-trait Length {
+#[allow(clippy::len_without_is_empty)]
+pub trait Length {
     fn squared_len(&self) -> Float;
     fn len(&self) -> Float;
     fn to_unit(&self) -> Self;
@@ -124,7 +121,7 @@ impl Length for Vector {
     }
 }
 
-trait Scale {
+pub trait Scale {
     fn scale(&self, rhs: Float) -> Self;
     fn scale_mut(&mut self, rhs: Float);
 }
@@ -145,7 +142,7 @@ impl Scale for Vector {
     }
 }
 
-trait Dot {
+pub trait Dot {
     fn dot(&self, rhs: Self) -> Float;
 }
 
@@ -155,7 +152,7 @@ impl Dot for Vector {
     }
 }
 
-trait Cross {
+pub trait Cross {
     fn cross(&self, rhs: Self) -> Self;
 }
 
@@ -170,19 +167,23 @@ impl Cross for Vector {
 }
 
 #[cfg(test)]
-mod test_vectors {
+pub(crate) mod test_vectors {
     use super::*;
     use crate::float_constants;
 
-    const NULL: Vector = make_vector(0., 0., 0.);
-    const POS_100: Vector = make_vector(1., 0., 0.);
-    const POS_010: Vector = make_vector(0., 1., 0.);
-    const POS_001: Vector = make_vector(0., 0., 1.);
+    pub const fn make_vector(x: Float, y: Float, z: Float) -> Vector {
+        Vector { x, y, z }
+    }
 
-    const POS_123: Vector = make_vector(1., 2., 3.);
-    const NEG_123: Vector = make_vector(-1., -2., -3.);
-    const NEG_111: Vector = make_vector(-1., -1., -1.);
-    const NEG_149: Vector = make_vector(-1., -4., -9.);
+    pub const NULL: Vector = make_vector(0., 0., 0.);
+    pub const POS_100: Vector = make_vector(1., 0., 0.);
+    pub const POS_010: Vector = make_vector(0., 1., 0.);
+    pub const POS_001: Vector = make_vector(0., 0., 1.);
+
+    pub const POS_123: Vector = make_vector(1., 2., 3.);
+    pub const NEG_123: Vector = make_vector(-1., -2., -3.);
+    pub const NEG_111: Vector = make_vector(-1., -1., -1.);
+    pub const NEG_149: Vector = make_vector(-1., -4., -9.);
 
     #[test]
     fn test_add() {
