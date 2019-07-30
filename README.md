@@ -1,8 +1,15 @@
 # rampage
 
-## Environment Setup
+raytracer
 
-```sh
-git clone --recurse-submodules git@github.com:westrik/rampage.git; cd rampage
-ln -sf ../../.git_hooks/pre-push .git/hooks/pre-push
-```
+![Random Sphere Scene](output/random_spheres.png)
+
+Rendered at 2000x1500 on a 2.6 GHz i7 in 29 minutes, 12 seconds (single-threaded).
+
+## Todo
+- [ ] Use multiple threads
+- [ ] Add lighting
+- [ ] Add triangles and OBJ loading
+- [ ] Fancier rendering algorithms
+- [ ] ...
+
