@@ -38,22 +38,7 @@ impl Scatter for Material {
 pub trait Reflect {
     fn reflect(&self, v: Vector, n: Vector) -> Vector;
 }
-impl Reflect for Material {
-    fn reflect(&self, v: Vector, n: Vector) -> Vector {
-        v - n.scale(2. * v.dot(n))
-    }
-}
 
 pub trait Refract {
-    fn refract(&self, v: Vector, n: Vector, ni_over_nt: Float, refracted: Vector) -> Vector;
-}
-impl Refract for Material {
-    fn refract(&self, v: Vector, n: Vector, ni_over_nt: f64, refracted: Vector) -> Vector {
-        /*
-        let uv = v.to_unit();
-        let dt = uv.dot(n);
-        let discriminant = 1. - ni_over_nt * ni_over_nt * (1. - dt * dt);
-        */
-        unimplemented!()
-    }
+    fn refract(&self, v: Vector, n: Vector, ni_over_nt: Float) -> Option<Vector>;
 }

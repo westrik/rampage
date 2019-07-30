@@ -1,5 +1,5 @@
 use crate::Float;
-use std::ops::{AddAssign, Mul};
+use std::ops::{Add, AddAssign, Mul};
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct RgbColor {
@@ -9,6 +9,29 @@ pub struct RgbColor {
 }
 
 pub type Color = RgbColor;
+
+pub const BLACK: Color = Color {
+    r: 0.,
+    g: 0.,
+    b: 0.,
+};
+pub const WHITE: Color = Color {
+    r: 1.,
+    g: 1.,
+    b: 1.,
+};
+
+impl Add for RgbColor {
+    type Output = Self;
+
+    fn add(self, rhs: Self) -> Self::Output {
+        Self {
+            r: self.r + rhs.r,
+            g: self.g + rhs.g,
+            b: self.b + rhs.b,
+        }
+    }
+}
 
 impl AddAssign for RgbColor {
     fn add_assign(&mut self, rhs: Self) {
@@ -44,6 +67,11 @@ pub mod test_colors {
         g: 1.,
         b: 1.,
     };
+
+    #[test]
+    fn test_add() {
+        assert_eq!(BLACK + WHITE, BLACK);
+    }
 
     #[test]
     fn test_add_assign() {
