@@ -1,7 +1,7 @@
 use crate::geometry::ray::*;
 use crate::geometry::shape::*;
 use crate::geometry::vector::*;
-use crate::material::*;
+use crate::materials::*;
 use crate::Float;
 
 pub struct Sphere {

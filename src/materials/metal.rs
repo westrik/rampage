@@ -2,7 +2,7 @@ use crate::color::Color;
 use crate::geometry::ray::Ray;
 use crate::geometry::shape::Intersection;
 use crate::geometry::vector::*;
-use crate::material::*;
+use crate::materials::*;
 use crate::util::random::random_vector_in_unit_sphere;
 use crate::Float;
 

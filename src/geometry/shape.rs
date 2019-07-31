@@ -1,7 +1,7 @@
 use crate::geometry::ray::Ray;
 use crate::geometry::sphere::*;
 use crate::geometry::vector::Vector;
-use crate::material::Material;
+use crate::materials::Material;
 use crate::Float;
 
 pub enum Shape {

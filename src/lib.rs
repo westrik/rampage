@@ -1,17 +1,17 @@
 pub mod camera;
 pub mod color;
 pub mod geometry;
-pub mod material;
+pub mod materials;
 pub mod output;
 pub mod util;
 
 use crate::camera::*;
 use crate::color::*;
 use crate::geometry::vector::*;
-use crate::material::*;
+use crate::materials::*;
 
 use crate::geometry::ray::Ray;
-use crate::geometry::scene::random_scene;
+use crate::geometry::scene::{random_spheres_scene, Scene};
 use crate::geometry::shape::*;
 use crate::output::Image;
 pub use core::f64 as float;
@@ -20,6 +20,14 @@ use std::sync::{Arc, Mutex};
 use std::thread;
 
 pub type Float = f64;
+
+#[derive(Clone, Copy)]
+pub struct RenderConfig {
+    pub num_threads: u32,
+    pub num_iterations: u32,
+    pub max_depth: i32,
+    pub dimensions: (u32, u32),
+}
 
 fn get_color(ray: &Ray, world: &[Shape], current_depth: i32, max_depth: i32) -> Color {
     if let Some(intersection) = world.intersect(ray, 0.001, float::MAX) {
@@ -45,27 +53,17 @@ fn get_color(ray: &Ray, world: &[Shape], current_depth: i32, max_depth: i32) -> 
     }
 }
 
-// TODO: put all of this data in a SceneConfig struct.
-#[allow(clippy::too_many_arguments)]
-fn render_pixel(
-    scene: &[Shape],
-    camera: &Camera,
-    i: u32,
-    j: u32,
-    width: u32,
-    height: u32,
-    num_iterations: u32,
-    max_depth: i32,
-) -> Color {
-    let num_iterations_f = Float::from(num_iterations);
+fn render_at_coordinates(i: u32, j: u32, sc: &Scene, rc: RenderConfig) -> Color {
+    let num_iterations_f = Float::from(rc.num_iterations);
+    let (width, height) = rc.dimensions;
     let mut rng = rand::thread_rng();
 
     let mut pixel = BLACK;
-    for _ in 0..num_iterations {
+    for _ in 0..rc.num_iterations {
         let u = (Float::from(i) + rng.gen::<Float>()) / Float::from(width);
         let v = (Float::from(j) + rng.gen::<Float>()) / Float::from(height);
-        let ray = camera.get_ray(u, v);
-        pixel += get_color(&ray, scene, 0, max_depth);
+        let ray = sc.camera.get_ray(u, v);
+        pixel += get_color(&ray, &sc.shapes, 0, rc.max_depth);
     }
     pixel = Color {
         r: pixel.r / num_iterations_f,
@@ -80,71 +78,45 @@ fn render_pixel(
     }
 }
 
-pub fn render_ball_scene() -> Image {
-    /*
-    TODO:
-    - refactoring + add more tests
-    */
-    let num_iterations = 100;
-    let max_depth = 60;
-    let width: u32 = 2000;
-    let height: u32 = 1500;
+pub fn render_scene(scene_name: &str, render_config: RenderConfig) -> Result<Image, &'static str> {
+    match scene_name {
+        "random_spheres" => Ok(render_using_threads(
+            render_config,
+            random_spheres_scene(render_config.dimensions),
+        )),
+        _ => Err("invalid scene_name"),
+    }
+}
 
-    let pixels = Arc::new(Mutex::new(vec![BLACK; (width * height) as usize]));
+pub fn render_using_threads(render_config: RenderConfig, scene: Scene) -> Image {
+    let (width, height) = render_config.dimensions;
+    let num_threads = render_config.num_threads;
     let mut thread_handles = vec![];
 
-    let world = Arc::new(random_scene());
+    let pixels = Arc::new(Mutex::new(vec![BLACK; (width * height) as usize]));
+    let scene = Arc::new(scene);
 
-    let num_threads = 12;
     for thread_id in 0..num_threads {
         let pixels = Arc::clone(&pixels);
-        let world = Arc::clone(&world);
-        let camera = build_camera(
-            Vector {
-                x: 13.,
-                y: 2.,
-                z: 3.,
-            },
-            Vector {
-                x: 0.,
-                y: 0.,
-                z: 0.,
-            },
-            Vector {
-                x: 0.,
-                y: 1.,
-                z: 0.,
-            },
-            20.,
-            Float::from(width) / Float::from(height),
-            0.1,
-            10.,
-        );
+        let scene = Arc::clone(&scene);
+
         let handle = thread::spawn(move || {
-            let world = world;
             let cols_per_thread = width / num_threads;
-            let start = thread_id * cols_per_thread;
-            let end = if thread_id == num_threads - 1 {
+            let start_col = thread_id * cols_per_thread;
+            let end_col = if thread_id == num_threads - 1 {
                 width
             } else {
                 (thread_id + 1) * cols_per_thread
             };
 
-            for i in start..end {
+            for i in start_col..end_col {
                 for j in 0..height {
-                    pixels.lock().unwrap()[((height - j - 1) * width + i) as usize] = render_pixel(
-                        &world,
-                        &camera,
-                        i,
-                        j,
-                        width,
-                        height,
-                        num_iterations,
-                        max_depth,
-                    );
+                    pixels.lock().unwrap()[((height - j - 1) * width + i) as usize] =
+                        render_at_coordinates(i, j, &scene, render_config);
                 }
             }
         });
+
         thread_handles.push(handle);
     }
 

@@ -2,7 +2,7 @@ use crate::color::*;
 use crate::geometry::ray::Ray;
 use crate::geometry::shape::Intersection;
 use crate::geometry::vector::*;
-use crate::material::*;
+use crate::materials::*;
 use crate::Float;
 use rand::prelude::*;
 

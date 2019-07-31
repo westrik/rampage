@@ -1,7 +1,7 @@
 use crate::color::Color;
 use crate::geometry::ray::Ray;
 use crate::geometry::shape::Intersection;
-use crate::material::*;
+use crate::materials::*;
 use crate::util::random::*;
 
 pub struct Lambertian {

@@ -57,33 +57,22 @@ impl Mul for RgbColor {
 pub mod test_colors {
     use super::*;
 
-    const WHITE: Color = Color {
-        r: 0.,
-        g: 0.,
-        b: 0.,
-    };
-    const BLACK: Color = Color {
-        r: 1.,
-        g: 1.,
-        b: 1.,
-    };
-
     #[test]
     fn test_add() {
-        assert_eq!(BLACK + WHITE, BLACK);
+        assert_eq!(BLACK + WHITE, WHITE);
     }
 
     #[test]
     fn test_add_assign() {
-        let mut color = WHITE;
-        color += BLACK;
-        assert_eq!(color, BLACK);
+        let mut color = BLACK;
+        color += WHITE;
+        assert_eq!(color, WHITE);
     }
 
     #[test]
     fn test_mul() {
         assert_eq!(WHITE * WHITE, WHITE);
-        assert_eq!(BLACK * WHITE, WHITE);
+        assert_eq!(BLACK * WHITE, BLACK);
         assert_eq!(BLACK * BLACK, BLACK);
     }
 }

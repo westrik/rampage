@@ -1,19 +1,25 @@
+use crate::camera::*;
 use crate::color::Color;
 use crate::geometry::shape::Shape;
 use crate::geometry::sphere::Sphere;
 use crate::geometry::vector::*;
-use crate::material::dielectric::Dielectric;
-use crate::material::lambertian::Lambertian;
-use crate::material::metal::Metal;
-use crate::material::Material;
+use crate::materials::dielectric::Dielectric;
+use crate::materials::lambertian::Lambertian;
+use crate::materials::metal::Metal;
+use crate::materials::Material;
 use crate::Float;
 use rand::prelude::*;
+
+pub struct Scene {
+    pub shapes: Vec<Shape>,
+    pub camera: Camera,
+}
 
 fn squared_rand(mut rng: ThreadRng) -> Float {
     rng.gen::<Float>() * rng.gen::<Float>()
 }
 
-pub fn random_scene() -> Vec<Shape> {
+fn generate_spheres() -> Vec<Shape> {
     let mut shapes = Vec::new();
     let mut rng = rand::thread_rng();
 
@@ -33,7 +39,6 @@ pub fn random_scene() -> Vec<Shape> {
             },
         }),
     });
-
     shapes.push(globe);
 
     // Add random small spheres in loop (random texture)
@@ -150,4 +155,32 @@ pub fn random_scene() -> Vec<Shape> {
     shapes.push(big_metal_ball);
 
     shapes
+}
+
+pub fn random_spheres_scene(dimensions: (u32, u32)) -> Scene {
+    let (width, height) = dimensions;
+    Scene {
+        shapes: generate_spheres(),
+        camera: build_camera(
+            Vector {
+                x: 13.,
+                y: 2.,
+                z: 3.,
+            },
+            Vector {
+                x: 0.,
+                y: 0.,
+                z: 0.,
+            },
+            Vector {
+                x: 0.,
+                y: 1.,
+                z: 0.,
+            },
+            20.,
+            Float::from(width) / Float::from(height),
+            0.1,
+            10.,
+        ),
+    }
 }
