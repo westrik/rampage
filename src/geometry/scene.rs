@@ -8,20 +8,18 @@ use crate::materials::lambertian::Lambertian;
 use crate::materials::metal::Metal;
 use crate::materials::Material;
 use crate::Float;
-use rand::prelude::*;
 
 pub struct Scene {
     pub shapes: Vec<Shape>,
     pub camera: Camera,
 }
 
-fn squared_rand(mut rng: ThreadRng) -> Float {
-    rng.gen::<Float>() * rng.gen::<Float>()
+fn squared_rand() -> Float {
+    0.5
 }
 
 fn generate_spheres() -> Vec<Shape> {
     let mut shapes = Vec::new();
-    let mut rng = rand::thread_rng();
 
     // Make large sphere for the ground.
     let globe = Shape::Sphere(Sphere {
@@ -46,11 +44,11 @@ fn generate_spheres() -> Vec<Shape> {
         for b in -11..11 {
             let a_f = Float::from(a);
             let b_f = Float::from(b);
-            let choose_material: Float = rng.gen();
+            let choose_material: Float = 0.5;
             let center = Vector {
-                x: a_f + 0.9 * rng.gen::<Float>(),
+                x: a_f + 0.9 * 0.3,
                 y: 0.2,
-                z: b_f + 0.9 * rng.gen::<Float>(),
+                z: b_f + 0.9 * 0.2,
             };
             if (center
                 - Vector {
@@ -68,9 +66,9 @@ fn generate_spheres() -> Vec<Shape> {
                         radius: 0.2,
                         material: Material::Lambertian(Lambertian {
                             albedo: Color {
-                                r: squared_rand(rng),
-                                g: squared_rand(rng),
-                                b: squared_rand(rng),
+                                r: squared_rand(),
+                                g: squared_rand(),
+                                b: squared_rand(),
                             },
                         }),
                     });
@@ -82,11 +80,11 @@ fn generate_spheres() -> Vec<Shape> {
                         radius: 0.2,
                         material: Material::Metal(Metal {
                             albedo: Color {
-                                r: 0.5 * (1. + rng.gen::<Float>()),
-                                g: 0.5 * (1. + rng.gen::<Float>()),
-                                b: 0.5 * (1. + rng.gen::<Float>()),
+                                r: 0.5 * (1. + 0.3),
+                                g: 0.5 * (1. + 0.7),
+                                b: 0.5 * (1. + 0.9),
                             },
-                            fuzziness: 0.5 * rng.gen::<Float>(),
+                            fuzziness: 0.5 * 0.2,
                         }),
                     });
                     shapes.push(metal_ball);

@@ -4,7 +4,6 @@ use crate::geometry::shape::Intersection;
 use crate::geometry::vector::*;
 use crate::materials::*;
 use crate::Float;
-use rand::prelude::*;
 
 pub struct Dielectric {
     pub refraction_index: Float,
@@ -57,7 +56,7 @@ impl Scatter for Dielectric {
             Some(Bounce {
                 attenuation: WHITE,
                 scattered: {
-                    if rand::thread_rng().gen::<Float>() < schlick(cosine, self.refraction_index) {
+                    if 0.5 < schlick(cosine, self.refraction_index) {
                         Ray {
                             origin: intersection.p,
                             direction: reflected,
