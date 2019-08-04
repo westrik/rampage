@@ -5,9 +5,9 @@ use rampage::{render_scene, RenderConfig};
 
 fn main() {
     let render_config = RenderConfig {
-        num_threads: 8,
-        num_iterations: 100,
-        max_depth: 60,
+        num_threads: 12,
+        num_iterations: 5,
+        max_depth: 10,
         dimensions: (2000, 1500),
     };
 
